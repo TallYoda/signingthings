@@ -130,7 +130,19 @@ export function SignaturePad({
     cropped.width = cropW;
     cropped.height = cropH;
     const cropCtx = cropped.getContext("2d")!;
-    cropCtx.putImageData(ctx.getImageData(minX, minY, cropW, cropH), 0, 0);
+    cropCtx.fillStyle = "#ffffff";
+    cropCtx.fillRect(0, 0, cropW, cropH);
+    cropCtx.drawImage(
+      canvas,
+      minX,
+      minY,
+      cropW,
+      cropH,
+      0,
+      0,
+      cropW,
+      cropH,
+    );
     return cropped.toDataURL("image/png");
   }, []);
 
