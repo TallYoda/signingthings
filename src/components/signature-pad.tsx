@@ -28,6 +28,7 @@ export function SignaturePad({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawing = useRef(false);
   const last = useRef<Point | null>(null);
+  const lastWidth = useRef(1.05);
   const empty = useRef(true);
   const ratioRef = useRef(1);
 
@@ -47,6 +48,10 @@ export function SignaturePad({
   const stroke = (from: Point, to: Point) => {
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
+    const dist = Math.hypot(to.x - from.x, to.y - from.y);
+    const target = Math.max(0.65, Math.min(1.25, 1.15 - dist * 0.045));
+    lastWidth.current += (target - lastWidth.current) * 0.4;
+    ctx.lineWidth = lastWidth.current;
     ctx.beginPath();
     ctx.moveTo(from.x, from.y);
     ctx.lineTo(to.x, to.y);
@@ -63,8 +68,8 @@ export function SignaturePad({
     ctx.scale(ratio, ratio);
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.strokeStyle = "#172554";
-    ctx.lineWidth = 2.6;
+    ctx.strokeStyle = "#111827";
+    ctx.lineWidth = 1.05;
   }, []);
 
   const fitCanvas = useCallback(() => {
@@ -90,6 +95,7 @@ export function SignaturePad({
     setupContext();
     empty.current = true;
     last.current = null;
+    lastWidth.current = 1.05;
     notify();
   }, [notify, setupContext]);
 
@@ -162,6 +168,7 @@ export function SignaturePad({
       event.preventDefault();
       canvas.setPointerCapture(event.pointerId);
       drawing.current = true;
+      lastWidth.current = 1.05;
       last.current = cssPoint(event);
     };
 
